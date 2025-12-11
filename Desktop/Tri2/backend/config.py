@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # OpenRouter API key
-# Try environment variable first, then fallback to direct key
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY") or "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"
+# Try environment variable first, then no fallback (must be set by user)
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 # Council members - list of OpenRouter model identifiers
 # Using Mistral, Devstral, and GLM models
