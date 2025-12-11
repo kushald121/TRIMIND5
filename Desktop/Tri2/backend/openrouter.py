@@ -21,6 +21,7 @@ async def query_model(
     Returns:
         Response dict with 'content' and optional 'reasoning_details', or None if failed
     """
+    print(f"DEBUG: Querying model {model} with {len(messages)} messages")
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
         "Content-Type": "application/json",
@@ -29,6 +30,7 @@ async def query_model(
     payload = {
         "model": model,
         "messages": messages,
+        "max_tokens": 1000,  # Limit tokens to stay within credit limits (6666 available)
     }
 
     try:
@@ -48,8 +50,23 @@ async def query_model(
                 'reasoning_details': message.get('reasoning_details')
             }
 
+    except httpx.HTTPStatusError as e:
+        try:
+            error_text = e.response.text
+            error_json = e.response.json() if e.response.headers.get('content-type', '').startswith('application/json') else None
+            if error_json:
+                error_msg = error_json.get('error', {}).get('message', str(error_json))
+                print(f"HTTP error querying model {model}: {e.response.status_code} - {error_msg}")
+            else:
+                print(f"HTTP error querying model {model}: {e.response.status_code} - {error_text[:500]}")
+        except:
+            print(f"HTTP error querying model {model}: {e.response.status_code} - {str(e)}")
+        return None
+    except httpx.RequestError as e:
+        print(f"Network error querying model {model}: {e}")
+        return None
     except Exception as e:
-        print(f"Error querying model {model}: {e}")
+        print(f"Unexpected error querying model {model}: {e}")
         return None
 
 

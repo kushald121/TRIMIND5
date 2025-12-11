@@ -4,15 +4,7 @@
 
 - Python 3.10 or higher
 - Node.js and npm
-- An OpenRouter API key (get one from https://openrouter.ai/keys)
-
-## Environment Setup
-
-Create a `.env` file in the root directory with your OpenRouter API key:
-
-```
-OPENROUTER_API_KEY=your_api_key_here
-```
+- An OpenRouter API key (set in `.env` file)
 
 ## Setup Instructions
 
@@ -65,7 +57,7 @@ npm install
    # From the TriMind directory
    npm run dev
    ```
-   The frontend will be available at `http://localhost:5174`
+   The frontend will be available at `http://localhost:5173`
 
 ### Option 2: Using the Startup Script
 
@@ -120,14 +112,6 @@ Make sure to update the frontend API URL in `TriMind/src/lib/api.ts` to match:
 
 ```typescript
 const API_BASE_URL = 'http://localhost:8002';  // Change this port number
-```
-
-And update the frontend port in `TriMind/vite.config.ts`:
-
-```typescript
-server: {
-  port: 5174,  // Change this port number
-}
 ```
 
 ### Virtual Environment Issues

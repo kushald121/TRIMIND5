@@ -128,6 +128,9 @@ async def stage3_synthesize_final(
     Returns:
         Dict with 'model' and 'response' keys
     """
+    print(f"DEBUG: Stage 3 - Synthesizing final response for query: {user_query}")
+    print(f"DEBUG: Stage 1 results count: {len(stage1_results)}")
+    print(f"DEBUG: Stage 2 results count: {len(stage2_results)}")
     # Build comprehensive context for chairman
     stage1_text = "\n\n".join([
         f"Model: {result['model']}\nResponse: {result['response']}"
@@ -177,7 +180,7 @@ Provide a clear, well-reasoned final answer that represents the council's collec
         # Fallback if chairman fails
         return {
             "model": CHAIRMAN_MODEL,
-            "response": "Error: Unable to generate final synthesis."
+            "response": "Error: Unable to generate final synthesis. This may be due to API key issues, model availability, or network connectivity problems. Please check your OpenRouter API key and try again."
         }
 
     return {
@@ -286,8 +289,8 @@ Title:"""
 
     messages = [{"role": "user", "content": title_prompt}]
 
-    # Use gemini-2.5-flash for title generation (fast and cheap)
-    response = await query_model("google/gemini-2.5-flash", messages, timeout=30.0)
+    # Use llama-3.1-8b-instruct:free for title generation (fast and free)
+    response = await query_model("meta-llama/llama-3.1-8b-instruct:free", messages, timeout=30.0)
 
     if response is None:
         # Fallback to a generic title
@@ -322,7 +325,7 @@ async def run_full_council(user_query: str) -> Tuple[List, List, Dict, Dict]:
     if not stage1_results:
         return [], [], {
             "model": "error",
-            "response": "All models failed to respond. Please try again."
+            "response": "All models failed to respond. This may be due to API key issues, model availability, or network connectivity problems. Please check your OpenRouter API key and try again."
         }, {}
 
     # Stage 2: Collect rankings
